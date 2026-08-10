@@ -1,0 +1,63 @@
+# Dependencies and package-manager caches
+node_modules/
+.npm/
+.npm-cache/
+.pnpm-store/
+.yarn/
+
+# Frontend build output and test artifacts
+dist/
+.vite/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Tauri / Rust build output
+src-tauri/target/
+src-tauri/gen/
+debug/
+release/
+
+# Local environment files and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local application data, databases, and logs
+*.log
+logs/
+*.sqlite
+*.sqlite3
+*.db
+
+# Python virtual environments and caches (used by local tooling)
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Editor and IDE settings
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.iml
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary files and local backups
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
