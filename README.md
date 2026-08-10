@@ -65,6 +65,10 @@ The application UI bundles Manrope and Noto Sans Thai under the SIL Open Font Li
 
 The capability file grants only core window, native dialog, and explicit opener permissions. File reads/writes are implemented in Rust commands that accept only the expected document/font/signature extensions. The CSP denies `connect-src`, so the UI cannot make network requests.
 
+## License
+
+EasySamnao is source-available, not OSI open source, under the [PolyForm Noncommercial License 1.0.0](LICENSE). Use is governed by the official [LICENSE](LICENSE), also available from the [PolyForm Project](https://polyformproject.org/licenses/noncommercial/1.0.0). Commercial use is not licensed, and no separate commercial license is currently offered. See [Commercial Use Information](COMMERCIAL-USE.md).
+
 ## Development setup
 
 Prerequisites on Windows:
