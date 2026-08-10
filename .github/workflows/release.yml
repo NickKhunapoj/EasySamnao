@@ -17,14 +17,12 @@ jobs:
     name: Validate release version
     runs-on: windows-latest
     outputs:
-      should_release: ${{ steps.version.outputs.should_release }}
+      should_release: ${{ steps.release-check.outputs.exists == 'false' }}
     steps:
       - name: Check out source
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 2
 
-      - name: Validate version and detect a version change
+      - name: Validate application version
         id: version
         shell: pwsh
         run: |
@@ -33,28 +31,31 @@ jobs:
           if ($packageVersion -ne $tauriVersion) {
             throw "package.json ($packageVersion) and src-tauri/tauri.conf.json ($tauriVersion) must use the same version."
           }
+          "version=$packageVersion" >> $env:GITHUB_OUTPUT
 
-          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
-            "should_release=true" >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-
-          $previousSha = "${{ github.event.before }}"
-          if ([string]::IsNullOrWhiteSpace($previousSha) -or $previousSha -match "^0+$") {
-            "should_release=true" >> $env:GITHUB_OUTPUT
-            exit 0
-          }
-
-          $previousPackage = (git show "$($previousSha):package.json" | Out-String) | ConvertFrom-Json
-          $previousTauri = (git show "$($previousSha):src-tauri/tauri.conf.json" | Out-String) | ConvertFrom-Json
-          $versionChanged = $packageVersion -ne $previousPackage.version -or $tauriVersion -ne $previousTauri.version
-          "should_release=$($versionChanged.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+      - name: Check whether this version already has a release
+        id: release-check
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const tag = `v${{ steps.version.outputs.version }}`;
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag
+              });
+              core.setOutput("exists", "true");
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              core.setOutput("exists", "false");
+            }
 
   release:
     name: Build and publish Windows release
     runs-on: windows-latest
     needs: version-check
-    if: github.event_name == 'workflow_dispatch' || needs.version-check.outputs.should_release == 'true'
+    if: needs.version-check.outputs.should_release == 'true'
 
     steps:
       - name: Check out source
@@ -108,22 +109,6 @@ jobs:
             throw "package.json ($packageVersion) and src-tauri/tauri.conf.json ($tauriVersion) must use the same version."
           }
           "version=$packageVersion" >> $env:GITHUB_OUTPUT
-
-      - name: Require a new version
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const tag = `v${{ steps.version.outputs.version }}`;
-            try {
-              await github.rest.repos.getReleaseByTag({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag
-              });
-              core.setFailed(`Release ${tag} already exists. Increase the version before merging to main.`);
-            } catch (error) {
-              if (error.status !== 404) throw error;
-            }
 
       - name: Build installers and create GitHub Release
         uses: tauri-apps/tauri-action@v1
