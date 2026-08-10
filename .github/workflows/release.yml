@@ -135,4 +135,4 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: --bundles msi,nsis
-          releaseAssetNamePattern: EasySamnao_[version]_[platform]_[arch][setup].[ext]
+          releaseAssetNamePattern: EasySamnao_[platform]_[arch][setup].[ext]
