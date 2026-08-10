@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Button, Input, Select, Slider, Switch } from "@fluentui/react-components";
 import type { SignatureMetadata, TemplateId, WatermarkInstance, WatermarkPatch } from "../types";
 import { formatCertificationDate } from "../utils/date";
@@ -16,6 +17,12 @@ interface Props {
 
 export function PropertiesPanel({ watermark, signatures, onChange, onTransform, onReset, onApplyToSelected }: Props) {
   const t = text(useSettingsStore((state) => state.settings.language));
+  const [rotationInput, setRotationInput] = useState("");
+
+  useEffect(() => {
+    setRotationInput(watermark ? String(watermark.transform.rotation) : "");
+  }, [watermark?.transform.rotation]);
+
   if (!watermark) return <aside className="properties"><h2>{t.properties}</h2><p className="empty-copy">{t.importDocumentToEdit}</p></aside>;
   const updateStyle = (patch: Partial<WatermarkInstance["style"]>) => onChange({ style: patch });
   return <aside className="properties" aria-label="Watermark properties">
@@ -49,7 +56,7 @@ export function PropertiesPanel({ watermark, signatures, onChange, onTransform, 
     </section>
     <section className="property-section">
       <h3>{t.layout}</h3>
-      <div className="field-row"><div className="field"><label htmlFor="rotation">{t.rotation}</label><Input id="rotation" type="number" value={String(watermark.transform.rotation)} onChange={(_, data) => onTransform({ rotation: Number(data.value) || 0 })} contentAfter="°" /></div><div className="field"><label htmlFor="scale">{t.width} ({Math.round(watermark.transform.width * 100)}%)</label><Input id="scale" type="number" min="12" max="125" value={String(Math.round(watermark.transform.width * 100))} onChange={(_, data) => onTransform({ width: Math.max(0.12, Math.min(1.25, Number(data.value) / 100 || 0.12)) })} contentAfter="%" /></div></div>
+      <div className="field-row"><div className="field"><label htmlFor="rotation">{t.rotation}</label><Input id="rotation" type="number" value={rotationInput} onChange={(_, data) => { setRotationInput(data.value); const rotation = Number(data.value); if (data.value !== "" && Number.isFinite(rotation)) onTransform({ rotation }); }} onBlur={() => { if (rotationInput === "" || !Number.isFinite(Number(rotationInput))) setRotationInput(String(watermark.transform.rotation)); }} contentAfter="°" /></div><div className="field"><label htmlFor="scale">{t.width} ({Math.round(watermark.transform.width * 100)}%)</label><Input id="scale" type="number" min="12" max="125" value={String(Math.round(watermark.transform.width * 100))} onChange={(_, data) => onTransform({ width: Math.max(0.12, Math.min(1.25, Number(data.value) / 100 || 0.12)) })} contentAfter="%" /></div></div>
       <div className="field"><label>{t.scale}</label><Slider min={0.12} max={1.25} step={0.01} value={watermark.transform.width} onChange={(_, data) => onTransform({ width: data.value })} /></div>
       <div className="layout-actions"><Button onClick={onReset}>{t.resetLayout}</Button><Button onClick={onApplyToSelected}>{t.applyToIncluded}</Button></div>
     </section>
