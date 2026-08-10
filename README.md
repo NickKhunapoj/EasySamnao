@@ -6,7 +6,7 @@ EasySamnao is a local-only Windows desktop utility for applying editable Thai do
 
 ## Screenshots
 
-_Screenshot placeholder — the main workspace has page thumbnails, a PDF.js/PNG preview with a Konva watermark overlay, and a properties pane._
+<img width="2560" height="1392" alt="image" src="https://github.com/user-attachments/assets/d337c898-534b-4747-a827-e29fa69fd2f2" />
 
 ## Features
 
