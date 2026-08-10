@@ -18,9 +18,12 @@ pub struct AppSettings {
     pub font_name: Option<String>,
     #[serde(default = "default_language")]
     pub language: String,
+    #[serde(default = "default_theme")]
+    pub theme: String,
 }
 
 fn default_language() -> String { "en".to_string() }
+fn default_theme() -> String { "light".to_string() }
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]

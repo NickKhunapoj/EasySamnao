@@ -35,6 +35,7 @@ interface DocumentStore {
   watermarks: Record<number, WatermarkInstance>;
   history: WatermarkHistory;
   setDocument: (document: ImportedDocument, settings: AppSettings) => void;
+  clearDocument: () => void;
   setActivePage: (page: number) => void;
   toggleSelectedPage: (page: number) => void;
   updateWatermark: (patch: WatermarkPatch) => void;
@@ -62,6 +63,9 @@ export const useDocumentStore = create<DocumentStore>((set, get) => {
       const defaultWatermark = createDefaultWatermark(settings);
       const watermarks = Object.fromEntries(document.pages.map((page) => [page.index, clone(defaultWatermark)]));
       set({ document, activePage: 0, selectedPages: [0], watermarks, history: { past: [], future: [] } });
+    },
+    clearDocument() {
+      set({ document: null, activePage: 0, selectedPages: [0], watermarks: {}, history: { past: [], future: [] } });
     },
     // Opening a page only edits that page; inclusion in export is controlled by its checkbox.
     setActivePage(page) { set({ activePage: page }); },

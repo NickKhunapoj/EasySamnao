@@ -26,6 +26,7 @@ export function CreateCopyPage() {
   const selectedPages = useDocumentStore((state) => state.selectedPages);
   const watermarks = useDocumentStore((state) => state.watermarks);
   const setDocument = useDocumentStore((state) => state.setDocument);
+  const clearDocument = useDocumentStore((state) => state.clearDocument);
   const setActivePage = useDocumentStore((state) => state.setActivePage);
   const toggleSelectedPage = useDocumentStore((state) => state.toggleSelectedPage);
   const updateWatermark = useDocumentStore((state) => state.updateWatermark);
@@ -66,6 +67,16 @@ export function CreateCopyPage() {
       const defaultSignature = (await listSignatures()).find((signature) => signature.isDefault);
       if (defaultSignature) updateWatermark({ signatureId: defaultSignature.id });
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Unable to import the document."); }
+  };
+  const discardWork = () => {
+    if (!document || !window.confirm(t.discardConfirm)) return;
+    clearDocument();
+    signatureCache.current.clear();
+    setSignatureSvg(null);
+    setZoom("fit-page");
+    setExportOptions(initialExport);
+    setError(null);
+    setSuccessPath(null);
   };
   const dropFile = async (file: File) => {
     try { setError(null); setDocument(await createImportedDocumentFromFile(file), settings); }
@@ -116,7 +127,7 @@ export function CreateCopyPage() {
     finally { setBusy(false); }
   };
   return <main className="workspace page">
-    <div className="workspace-top"><div className="workspace-header"><div><h1>{t.createCopy}</h1><div className="document-meta">{document ? `${document.filename} · ${document.pages.length} ${t.pages.toLowerCase()} · ${Math.round(document.pages[activePage]?.width ?? 0)} × ${Math.round(document.pages[activePage]?.height ?? 0)}` : t.localUtility}</div></div><Button onClick={importDocument}>{t.importDocument}</Button></div>
+    <div className="workspace-top"><div className="workspace-header"><div><h1>{t.createCopy}</h1><div className="document-meta">{document ? `${document.filename} · ${document.pages.length} ${t.pages.toLowerCase()} · ${Math.round(document.pages[activePage]?.width ?? 0)} × ${Math.round(document.pages[activePage]?.height ?? 0)}` : t.localUtility}</div></div><div className="workspace-actions"><Button onClick={importDocument}>{t.importDocument}</Button><Button appearance="secondary" className="discard-button" disabled={!document || busy} onClick={discardWork}>{t.discard}</Button></div></div>
       {error && <div className="error-banner">{error}</div>}{successPath && <div className="notice">{t.exportCompleted} <Button size="small" onClick={() => openPath(successPath)}>{t.openFile}</Button><Button size="small" onClick={() => revealItemInDir(successPath)}>{t.openFolder}</Button></div>}
     </div>
     <div className="workspace-grid">

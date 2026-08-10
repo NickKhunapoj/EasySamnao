@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { invoke } from "@tauri-apps/api/core";
-import type { AppSettings } from "../types";
+import type { AppSettings, ThemeMode } from "../types";
 
 export const defaultSettings: AppSettings = {
   defaultTemplate: "classic-horizontal",
@@ -12,8 +12,13 @@ export const defaultSettings: AppSettings = {
   defaultDateFormat: "thai-long",
   fontPath: null,
   fontName: null,
-  language: "en"
+  language: "en",
+  theme: "light"
 };
+
+function isThemeMode(value: unknown): value is ThemeMode {
+  return value === "light" || value === "dark" || value === "system";
+}
 
 interface SettingsStore {
   settings: AppSettings;
@@ -35,6 +40,9 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     // Return those installations to the bundled TH Sarabun New default.
     if (migrated?.fontPath && /\\windows\\fonts\\/i.test(migrated.fontPath) && /^(leelawui|leelawuib|tahoma)$/i.test(migrated.fontName ?? "")) {
       migrated.fontPath = null; migrated.fontName = null; changed = true;
+    }
+    if (migrated && !isThemeMode(migrated.theme)) {
+      migrated.theme = defaultSettings.theme; changed = true;
     }
     const settings = { ...defaultSettings, ...migrated };
     set({ settings, loaded: true });

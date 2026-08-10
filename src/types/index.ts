@@ -18,6 +18,7 @@ export interface ImportedDocument {
 export type TemplateId = "classic-horizontal" | "compact" | "minimal-diagonal";
 export type DateFormat = "thai-numeric" | "thai-long" | "english-long" | "iso";
 export type AppLanguage = "en" | "th";
+export type ThemeMode = "light" | "dark" | "system";
 export type SignatureColorMode = "original" | "custom";
 
 export interface WatermarkStyle {
@@ -73,6 +74,7 @@ export interface AppSettings {
   fontPath: string | null;
   fontName: string | null;
   language: AppLanguage;
+  theme: ThemeMode;
 }
 
 export interface ExportOptions {

@@ -1,6 +1,7 @@
 @font-face { font-family: "TH Sarabun New"; src: url("../assets/THSarabunNew.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: block; }
 @font-face { font-family: "TH Sarabun New"; src: url("../assets/THSarabunNew-Bold.ttf") format("truetype"); font-style: normal; font-weight: 700; font-display: block; }
-:root { font-family: "Segoe UI", "Noto Sans Thai", sans-serif; color: #1b1b1f; background: #f7f7f8; }
+@font-face { font-family: "Noto Sans Thai"; src: url("../assets/NotoSansThai-Variable.ttf") format("truetype"); font-style: normal; font-weight: 100 900; font-display: block; }
+:root { font-family: "Noto Sans Thai", "Segoe UI", sans-serif; color: #1b1b1f; background: #f7f7f8; }
 * { box-sizing: border-box; }
 html, body, #root, #root > * { min-width: 840px; min-height: 600px; height: 100%; margin: 0; overflow: hidden; }
 button, input, select, textarea { font: inherit; }
@@ -15,6 +16,11 @@ button, input, select, textarea { font: inherit; }
 .page { min-width: 0; min-height: 0; height: 100%; }
 .workspace { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: clamp(10px, 1.5vw, 18px); gap: 10px; overflow: hidden; }
 .workspace-header, .settings-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.workspace-actions { display: flex; align-items: center; gap: 8px; }
+.discard-button.fui-Button { background: #c42b1c; border-color: #c42b1c; color: #fff; }
+.discard-button.fui-Button:hover { background: #a4261a; border-color: #a4261a; color: #fff; }
+.discard-button.fui-Button:active { background: #7a1d14; border-color: #7a1d14; color: #fff; }
+.discard-button.fui-Button:disabled { background: #e5b6b1; border-color: #e5b6b1; color: #fff; }
 .workspace-top { display: grid; gap: 8px; min-width: 0; }
 .workspace-header h1, .settings-header h1 { font-size: 22px; margin: 0; font-weight: 600; }
 .document-meta { color: #666; font-size: 13px; margin-top: 4px; }
@@ -69,3 +75,32 @@ button, input, select, textarea { font: inherit; }
   .properties { padding: 10px; }
   .workspace-grid { grid-template-columns: 150px minmax(185px, 1fr) 320px; }
 }
+
+/* Light mode keeps the app's original appearance. Dark mode only changes the app chrome;
+   document pages and preview canvases intentionally remain white. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; color: #f3f3f3; background: #1f1f1f; }
+:root[data-theme="dark"] body { background: #1f1f1f; }
+:root[data-theme="dark"] .sidebar { background: linear-gradient(180deg, #292929 0%, #202020 100%); border-color: #3d3d3d; }
+:root[data-theme="dark"] .nav button { color: #ededed; }
+:root[data-theme="dark"] .nav button:hover { background: #383838; }
+:root[data-theme="dark"] .nav button.active { background: #204d78; color: #e6f2ff; }
+:root[data-theme="dark"] .document-meta,
+:root[data-theme="dark"] .field label,
+:root[data-theme="dark"] .zoom-controls,
+:root[data-theme="dark"] .status,
+:root[data-theme="dark"] .empty-copy { color: #b8b8b8; }
+:root[data-theme="dark"] .workspace-grid { background: #2b2b2b; border-color: #434343; box-shadow: 0 1px 3px #00000066; }
+:root[data-theme="dark"] .pages-panel { background: #252525; border-color: #424242; }
+:root[data-theme="dark"] .page-thumb { background: #303030; border-color: #525252; color: #f3f3f3; }
+:root[data-theme="dark"] .page-thumb.selected { outline-color: #4aa3f0; border-color: #4aa3f0; }
+:root[data-theme="dark"] .preview-region { background: #1a1a1a; }
+:root[data-theme="dark"] .properties { background: #2b2b2b; border-color: #424242; }
+:root[data-theme="dark"] .property-section { border-color: #444; }
+:root[data-theme="dark"] .drop-target { background: #303030; border-color: #888; }
+:root[data-theme="dark"] .error-banner { background: #5d2429; color: #ffdfe2; }
+:root[data-theme="dark"] .notice { background: #1f5633; color: #dcf9e3; }
+:root[data-theme="dark"] .settings-card { background: #2b2b2b; border-color: #454545; }
+:root[data-theme="dark"] .signature-item { border-color: #484848; }
+:root[data-theme="dark"] .dialog { background: #2b2b2b; box-shadow: 0 8px 30px #00000099; }
+:root[data-theme="dark"] .discard-button.fui-Button:disabled { background: #3a3a3a; border-color: #4b4b4b; color: #a6a6a6; opacity: 1; }

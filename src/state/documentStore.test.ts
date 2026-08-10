@@ -24,4 +24,10 @@ describe("page-specific watermark state and history", () => {
     store.updateTransform({ x: 0.24 }); store.toggleSelectedPage(1); store.applyActiveWatermarkToSelected();
     expect(useDocumentStore.getState().watermarks[1].transform.x).toBe(0.24);
   });
+  it("clears the document and all in-progress editor state", () => {
+    const store = useDocumentStore.getState();
+    store.updateTransform({ x: 0.24 }); store.setActivePage(1); store.toggleSelectedPage(1);
+    store.clearDocument();
+    expect(useDocumentStore.getState()).toMatchObject({ document: null, activePage: 0, selectedPages: [0], watermarks: {}, history: { past: [], future: [] } });
+  });
 });

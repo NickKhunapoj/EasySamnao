@@ -61,6 +61,8 @@ SVG imports pass through a graphics-only sanitizer. It retains safe shape tags/a
 
 The app checks a selected TTF/OTF for the Thai glyphs needed by the template. It searches `C:\Windows\Fonts` for TH Sarabun New on first launch; if unavailable, select another Thai-capable local font in Settings. Font files are never downloaded at runtime.
 
+The application UI bundles Noto Sans Thai under the SIL Open Font License 1.1; its license notice is included at `src/assets/NotoSansThai-OFL.txt`.
+
 The capability file grants only core window, native dialog, and explicit opener permissions. File reads/writes are implemented in Rust commands that accept only the expected document/font/signature extensions. The CSP denies `connect-src`, so the UI cannot make network requests.
 
 ## Development setup
