@@ -92,7 +92,8 @@ jobs:
 
       - name: Report Rust cache status
         shell: pwsh
-        run: Write-Host "Exact Rust cache hit: ${{ steps.rust-cache.outputs.cache-hit }}"
+        run: |
+          Write-Host "Exact Rust cache hit: ${{ steps.rust-cache.outputs.cache-hit }}"
 
       - name: Install dependencies
         run: npm ci
