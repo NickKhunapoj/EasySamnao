@@ -7,9 +7,9 @@ import { DocumentPreview, type ZoomMode } from "../../components/DocumentPreview
 import { PageThumbnails } from "../../components/PageThumbnails";
 import { PropertiesPanel } from "../../components/PropertiesPanel";
 import { createImportedDocument, createImportedDocumentFromFile } from "../../documents/importDocument";
-import { certifiedPdfFilename, certifiedPngFilename } from "../../export/fileNames";
-import { exportCertifiedPdf } from "../../export/pdfExport";
-import { renderCertifiedPng } from "../../export/pngExport";
+import { easySamnaoPdfFilename, easySamnaoPngFilename } from "../../export/fileNames";
+import { exportEasySamnaoPdf } from "../../export/pdfExport";
+import { renderEasySamnaoPng } from "../../export/pngExport";
 import { listSignatures, readSignatureSvg } from "../../signatures/signatureStorage";
 import { useDocumentStore } from "../../state/documentStore";
 import { useSettingsStore } from "../../state/settingsStore";
@@ -95,10 +95,10 @@ export function CreateCopyPage() {
     if (!document) return;
     try {
       setBusy(true); setError(null); setSuccessPath(null);
-      const target = await save({ defaultPath: certifiedPdfFilename(document.filename), filters: [{ name: "PDF", extensions: ["pdf"] }] });
+      const target = await save({ defaultPath: easySamnaoPdfFilename(document.filename), filters: [{ name: "PDF", extensions: ["pdf"] }] });
       if (typeof target !== "string") return;
       const includedWatermarks = Object.fromEntries(selectedPages.map((page) => [page, watermarks[page]]));
-      await write(target, await exportCertifiedPdf(document, includedWatermarks, signatureFor, settings));
+      await write(target, await exportEasySamnaoPdf(document, includedWatermarks, signatureFor, settings));
       setSuccessPath(target);
     } catch (reason) { setError(reason instanceof Error ? reason.message : "PDF export failed."); }
     finally { setBusy(false); }
@@ -112,15 +112,15 @@ export function CreateCopyPage() {
         const folder = await open({ directory: true, multiple: false, title: "Choose an output folder" });
         if (typeof folder !== "string") return;
         for (const index of pages) {
-          const output = await renderCertifiedPng(document, index, watermarks[index], await signatureFor(watermarks[index].signatureId), exportOptions.pngDpi);
-          await write(`${folder}\\${certifiedPngFilename(document.filename, index)}`, output);
+          const output = await renderEasySamnaoPng(document, index, watermarks[index], await signatureFor(watermarks[index].signatureId), exportOptions.pngDpi);
+          await write(`${folder}\\${easySamnaoPngFilename(document.filename, index)}`, output);
         }
         setSuccessPath(folder);
       } else {
         const index = pages[0];
-        const target = await save({ defaultPath: certifiedPngFilename(document.filename, index), filters: [{ name: "PNG", extensions: ["png"] }] });
+        const target = await save({ defaultPath: easySamnaoPngFilename(document.filename, index), filters: [{ name: "PNG", extensions: ["png"] }] });
         if (typeof target !== "string") return;
-        const output = await renderCertifiedPng(document, index, watermarks[index], await signatureFor(watermarks[index].signatureId), exportOptions.pngDpi);
+        const output = await renderEasySamnaoPng(document, index, watermarks[index], await signatureFor(watermarks[index].signatureId), exportOptions.pngDpi);
         await write(target, output); setSuccessPath(target);
       }
     } catch (reason) { setError(reason instanceof Error ? reason.message : "PNG export failed."); }

@@ -11,7 +11,7 @@ function checkSize(width: number, height: number): void {
   if (width * height > 90_000_000 || width > 16_384 || height > 16_384) throw new Error("This export resolution is too large for safe memory use. Choose a lower DPI.");
 }
 
-export async function renderCertifiedPng(sourceDocument: ImportedDocument, pageIndex: number, watermark: WatermarkInstance, signatureSvg: string | null, dpi: number): Promise<Uint8Array> {
+export async function renderEasySamnaoPng(sourceDocument: ImportedDocument, pageIndex: number, watermark: WatermarkInstance, signatureSvg: string | null, dpi: number): Promise<Uint8Array> {
   const canvas = window.document.createElement("canvas");
   if (sourceDocument.kind === "pdf") {
     const pdf = await getDocument({ data: sourceDocument.bytes.slice() }).promise;

@@ -12,7 +12,7 @@ describe("vector PDF watermark output", () => {
     const watermark = createDefaultWatermark(defaultSettings);
     const englishPlan = { width: 1000, height: 300, elements: [
       { kind: "line" as const, x1: 50, y1: 30, x2: 950, y2: 30, strokeWidth: 5 },
-      { kind: "text" as const, text: "Certified Copy", x: 500, y: 130, fontSize: 64, weight: "bold" as const, align: "center" as const, role: "heading" as const }
+      { kind: "text" as const, text: "EasySamnao", x: 500, y: 130, fontSize: 64, weight: "bold" as const, align: "center" as const, role: "heading" as const }
     ] };
     await drawWatermarkToPdfPage(page, { normal: font, bold: font }, watermark, null, englishPlan);
     const output = await PDFDocument.load(await pdf.save());

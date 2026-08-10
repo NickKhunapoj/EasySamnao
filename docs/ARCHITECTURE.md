@@ -1,4 +1,4 @@
-# Certified Copy architecture
+# EasySamnao architecture
 
 ## Import and preview
 
@@ -40,7 +40,7 @@ flowchart LR
   A["Original PDF"] --> D["pdf-lib"]
   B["Watermark model"] --> D
   C["Embedded Thai font + decrypted safe signature"] --> D
-  D --> E["Certified PDF"]
+  D --> E["EasySamnao PDF"]
 ```
 
 PDF export preserves the original PDF content stream and adds watermark operations. The original document is not rendered to an image. PNG output deliberately renders the page at the chosen resolution, then overlays the plan.

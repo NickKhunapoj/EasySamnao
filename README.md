@@ -2,7 +2,7 @@
 
 ![EasySamnao icon](src/assets/easysamnao-icon.png)
 
-EasySamnao is a local-only Windows desktop utility for applying editable Thai certified-copy overlays to PDF and PNG documents. It is designed for sensitive identity documents: there is no backend, cloud sync, analytics, telemetry, CDN, or runtime network dependency.
+EasySamnao is a local-only Windows desktop utility for applying editable Thai document-certification overlays to PDF and PNG documents. It is designed for sensitive identity documents: there is no backend, cloud sync, analytics, telemetry, CDN, or runtime network dependency.
 
 ## Screenshots
 
@@ -53,7 +53,7 @@ The document preview pipeline is:
 
 For a source PDF, `pdf-lib` loads the original bytes and appends drawing commands to each page—there is no page screenshot or document rasterization. A selected Thai font is embedded with `fontkit`; text and horizontal rules remain vectors. Sanitized SVGs are source data; the implementation rasterizes only a signature to a transparent, high-resolution PNG for PDF compatibility.
 
-PNG export renders the original PDF page with PDF.js at the requested DPI and composites the same template plan. Multiple pages are saved as `filename-certified-page-001.png`, etc.; a multi-page PNG is never invented.
+PNG export renders the original PDF page with PDF.js at the requested DPI and composites the same template plan. Multiple pages are saved as `filename-easysamnao-page-001.png`, etc.; a multi-page PNG is never invented.
 
 ## Signatures, fonts, and privacy
 

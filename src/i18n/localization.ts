@@ -3,7 +3,7 @@ import type { AppLanguage } from "../types";
 export const translations = {
   en: {
     createCopy: "Create Copy", settings: "Settings", properties: "Properties", pages: "Pages",
-    localUtility: "Local-only certified document utility", importDocument: "Import document", import: "Import", discard: "Discard", discardConfirm: "Discard the current document and all unsaved watermark changes?",
+    localUtility: "Local-only document utility", importDocument: "Import document", import: "Import", discard: "Discard", discardConfirm: "Discard the current document and all unsaved watermark changes?",
     exportCompleted: "Export completed.", openFile: "Open file", openFolder: "Open folder",
     previewZoom: "Preview zoom", fitPage: "Fit page", fitWidth: "Fit width", currentPage: "Current page", selectedPages: "Selected pages", allPages: "All pages",
     exportPdf: "Export PDF", exportPng: "Export PNG", pngPages: "PNG pages", pngResolution: "PNG export resolution",

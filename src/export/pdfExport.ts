@@ -20,7 +20,7 @@ async function loadThaiFont(pdf: PDFDocument, settings: AppSettings) {
   catch { throw new Error("The selected font could not be embedded. Choose a valid Thai-capable TTF or OTF font."); }
 }
 
-export async function exportCertifiedPdf(document: ImportedDocument, watermarks: Record<number, WatermarkInstance>, signatureFor: (id: string | null) => Promise<string | null>, settings: AppSettings): Promise<Uint8Array> {
+export async function exportEasySamnaoPdf(document: ImportedDocument, watermarks: Record<number, WatermarkInstance>, signatureFor: (id: string | null) => Promise<string | null>, settings: AppSettings): Promise<Uint8Array> {
   const pdf = document.kind === "pdf"
     ? await PDFDocument.load(document.bytes, { ignoreEncryption: false, updateMetadata: false })
     : await PDFDocument.create();

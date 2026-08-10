@@ -1,16 +1,16 @@
 [package]
-name = "certified-copy"
+name = "easysamnao"
 version = "0.1.0"
-description = "Local Windows utility for creating certified document copies."
+description = "Local Windows utility for preparing document copies."
 authors = ["NickKhunapoj"]
 edition = "2021"
 
 [lib]
-name = "certified_copy_lib"
+name = "easysamnao_lib"
 crate-type = ["cdylib", "rlib"]
 
 [[bin]]
-name = "certified-copy"
+name = "easysamnao"
 path = "src/main.rs"
 
 [build-dependencies]
