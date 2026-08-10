@@ -11,6 +11,7 @@ dist/
 coverage/
 .nyc_output/
 *.tsbuildinfo
+misc/
 
 # Tauri / Rust build output
 src-tauri/target/
