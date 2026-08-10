@@ -6,7 +6,7 @@ import { resolveTheme, type ResolvedTheme } from "./app/theme";
 import "./app/global.css";
 import { useSettingsStore } from "./state/settingsStore";
 
-const appFontFamily = "'Noto Sans Thai', 'Segoe UI', sans-serif";
+const appFontFamily = "'Manrope', 'Noto Sans Thai', 'Segoe UI', sans-serif";
 
 function getSystemTheme(): ResolvedTheme {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";

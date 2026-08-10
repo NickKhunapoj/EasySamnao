@@ -1,7 +1,8 @@
 @font-face { font-family: "TH Sarabun New"; src: url("../assets/THSarabunNew.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: block; }
 @font-face { font-family: "TH Sarabun New"; src: url("../assets/THSarabunNew-Bold.ttf") format("truetype"); font-style: normal; font-weight: 700; font-display: block; }
+@font-face { font-family: "Manrope"; src: url("../assets/Manrope-Variable.ttf") format("truetype"); font-style: normal; font-weight: 200 800; font-display: block; }
 @font-face { font-family: "Noto Sans Thai"; src: url("../assets/NotoSansThai-Variable.ttf") format("truetype"); font-style: normal; font-weight: 100 900; font-display: block; }
-:root { font-family: "Noto Sans Thai", "Segoe UI", sans-serif; color: #1b1b1f; background: #f7f7f8; }
+:root { font-family: "Manrope", "Noto Sans Thai", "Segoe UI", sans-serif; color: #1b1b1f; background: #f7f7f8; }
 * { box-sizing: border-box; }
 html, body, #root, #root > * { min-width: 840px; min-height: 600px; height: 100%; margin: 0; overflow: hidden; }
 button, input, select, textarea { font: inherit; }

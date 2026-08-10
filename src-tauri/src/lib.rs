@@ -26,5 +26,5 @@ pub fn run() {
             set_default_signature
         ])
         .run(tauri::generate_context!())
-        .expect("error while running Certified Copy");
+        .expect("error while running EasySamnao");
 }
