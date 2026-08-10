@@ -42,7 +42,7 @@ export function buildTemplatePlan(watermark: WatermarkInstance): TemplatePlan {
       { kind: "line", x1: 90, y1: 22, x2: 910, y2: 22, strokeWidth: 2.5 },
       ...purpose.map((line, index) => centered(line, purposeStart + index * purposeLineHeight, purposeFontSize, "bold")),
       { kind: "line", x1: 90, y1: secondRuleY, x2: 910, y2: secondRuleY, strokeWidth: 2.5 },
-      centered(watermark.certificationText.trim() || "สำเนาถูกต้อง", headingY, 66, "normal", "heading"),
+      centered(watermark.certificationText.trim() || "สำเนาถูกต้อง", headingY, 66, "bold", "heading"),
       ...signatureElements(watermark, signatureY, signatureHeight).map((element) => element.kind === "text" && element.role === "date" ? { ...element, y: tailY } : element)
     ];
     return { width: definition.width, height: Math.max(definition.height, tailY + 34), elements };
@@ -50,14 +50,14 @@ export function buildTemplatePlan(watermark: WatermarkInstance): TemplatePlan {
   if (watermark.templateId === "compact") {
     const elements: TemplateElement[] = [
       { kind: "line", x1: 110, y1: 22, x2: 890, y2: 22, strokeWidth: 2.5 },
-      centered(watermark.certificationText.trim() || "สำเนาถูกต้อง", 88, 64, "normal", "heading"),
+      centered(watermark.certificationText.trim() || "สำเนาถูกต้อง", 88, 64, "bold", "heading"),
       ...purpose.map((line, index) => centered(line, 148 + index * 38, 34, "bold")),
       ...signatureElements(watermark, 210, 86)
     ];
     return { width: definition.width, height: definition.height, elements };
   }
   const elements: TemplateElement[] = [
-    centered(watermark.certificationText.trim() || "สำเนาถูกต้อง", 72, 72, "normal", "heading"),
+    centered(watermark.certificationText.trim() || "สำเนาถูกต้อง", 72, 72, "bold", "heading"),
     ...purpose.map((line, index) => centered(line, 128 + index * 38, 34, "bold")),
     ...signatureElements(watermark, 190, 80)
   ];
