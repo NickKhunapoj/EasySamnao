@@ -1,5 +1,7 @@
 # EasySamnao
 
+![EasySamnao icon](src/assets/easysamnao-icon.png)
+
 EasySamnao is a local-only Windows desktop utility for applying editable Thai certified-copy overlays to PDF and PNG documents. It is designed for sensitive identity documents: there is no backend, cloud sync, analytics, telemetry, CDN, or runtime network dependency.
 
 ## Screenshots
