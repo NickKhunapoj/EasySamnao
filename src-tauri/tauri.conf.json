@@ -26,6 +26,7 @@
   "bundle": {
     "active": true,
     "targets": ["nsis", "msi"],
+    "icon": ["icons/icon.ico"],
     "shortDescription": "Local Windows utility for creating certified document copies.",
     "longDescription": "EasySamnao applies local-only Thai certified-copy watermarks to PDF and PNG documents.",
     "windows": { "wix": { "language": "en-US" }, "nsis": { "installMode": "currentUser" } }
