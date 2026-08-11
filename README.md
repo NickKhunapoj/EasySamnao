@@ -1,6 +1,6 @@
-# EasySamnao
-
 ![EasySamnao icon](src/assets/easysamnao-icon.png)
+
+# EasySamnao
 
 EasySamnao is a local-only Windows desktop utility for applying editable Thai document-certification overlays to PDF and PNG documents. It is designed for sensitive identity documents: there is no backend, cloud sync, analytics, telemetry, CDN, or runtime network dependency.
 
@@ -67,7 +67,7 @@ The capability file grants only core window, native dialog, and explicit opener 
 
 ## License
 
-EasySamnao is source-available, not OSI open source, under the [PolyForm Noncommercial License 1.0.0](LICENSE). Use is governed by the official [LICENSE](LICENSE), also available from the [PolyForm Project](https://polyformproject.org/licenses/noncommercial/1.0.0). Commercial use is not licensed, and no separate commercial license is currently offered. See [Commercial Use Information](COMMERCIAL-USE.md).
+EasySamnao is source-available, not OSI open source, under the [PolyForm Noncommercial License 1.0.0](LICENSE). Use is governed by the official [LICENSE.md](LICENSE.md), also available from the [PolyForm Project](https://polyformproject.org/licenses/noncommercial/1.0.0). Commercial use is not licensed, and no separate commercial license is currently offered. See [Commercial Use Information](COMMERCIAL-USE.md).
 
 ## Development setup
 
