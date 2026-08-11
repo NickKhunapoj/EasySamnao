@@ -12,10 +12,10 @@ interface Props {
   onChange: (patch: WatermarkPatch) => void;
   onTransform: (patch: Partial<WatermarkInstance["transform"]>) => void;
   onReset: () => void;
-  onApplyToSelected: () => void;
+  onApplyToWatermarked: () => void;
 }
 
-export function PropertiesPanel({ watermark, signatures, onChange, onTransform, onReset, onApplyToSelected }: Props) {
+export function PropertiesPanel({ watermark, signatures, onChange, onTransform, onReset, onApplyToWatermarked }: Props) {
   const t = text(useSettingsStore((state) => state.settings.language));
   const [rotationInput, setRotationInput] = useState("");
 
@@ -58,7 +58,7 @@ export function PropertiesPanel({ watermark, signatures, onChange, onTransform, 
       <h3>{t.layout}</h3>
       <div className="field-row"><div className="field"><label htmlFor="rotation">{t.rotation}</label><Input id="rotation" type="number" value={rotationInput} onChange={(_, data) => { setRotationInput(data.value); const rotation = Number(data.value); if (data.value !== "" && Number.isFinite(rotation)) onTransform({ rotation }); }} onBlur={() => { if (rotationInput === "" || !Number.isFinite(Number(rotationInput))) setRotationInput(String(watermark.transform.rotation)); }} contentAfter="°" /></div><div className="field"><label htmlFor="scale">{t.width} ({Math.round(watermark.transform.width * 100)}%)</label><Input id="scale" type="number" min="12" max="125" value={String(Math.round(watermark.transform.width * 100))} onChange={(_, data) => onTransform({ width: Math.max(0.12, Math.min(1.25, Number(data.value) / 100 || 0.12)) })} contentAfter="%" /></div></div>
       <div className="field"><label>{t.scale}</label><Slider min={0.12} max={1.25} step={0.01} value={watermark.transform.width} onChange={(_, data) => onTransform({ width: data.value })} /></div>
-      <div className="layout-actions"><Button onClick={onReset}>{t.resetLayout}</Button><Button onClick={onApplyToSelected}>{t.applyToIncluded}</Button></div>
+      <div className="layout-actions"><Button onClick={onReset}>{t.resetLayout}</Button><Button onClick={onApplyToWatermarked}>{t.applyToWatermarked}</Button></div>
     </section>
   </aside>;
 }

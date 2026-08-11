@@ -1,10 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import { drawWatermarkToPdfPage } from "./renderWatermark";
+import { exportEasySamnaoPdf } from "./pdfExport";
 import { createDefaultWatermark } from "../state/documentStore";
 import { defaultSettings } from "../state/settingsStore";
 
 describe("vector PDF watermark output", () => {
+  it("exports only the selected source pages when no watermark is included", async () => {
+    const source = await PDFDocument.create();
+    source.addPage([595, 842]); source.addPage([595, 842]);
+    const document = {
+      path: "", filename: "test.pdf", kind: "pdf" as const, bytes: await source.save(),
+      pages: [{ index: 0, width: 595, height: 842, rotation: 0 }, { index: 1, width: 595, height: 842, rotation: 0 }]
+    };
+    const output = await exportEasySamnaoPdf(document, [1], {}, async () => null, defaultSettings);
+    expect((await PDFDocument.load(output)).getPageCount()).toBe(1);
+  });
+
   it("keeps a programmatic source page and adds vector watermark commands", async () => {
     const pdf = await PDFDocument.create(); const page = pdf.addPage([595, 842]);
     page.drawText("Original vector content", { x: 50, y: 760 });

@@ -20,7 +20,7 @@ function LazyPdfThumbnail({ pdf, page }: { pdf: PDFDocumentProxy; page: number }
   return <div ref={ref}>{visible ? <PdfCanvas pdf={pdf} page={page} scale={0.17} /> : <div style={{ height: 115 }} />}</div>;
 }
 
-export function PageThumbnails({ document, activePage, selectedPages, onActivate, onToggle, language }: { document: ImportedDocument | null; activePage: number; selectedPages: number[]; onActivate: (page: number) => void; onToggle: (page: number) => void; language: AppLanguage }) {
+export function PageThumbnails({ document, activePage, exportPages, watermarkedPages, onActivate, onToggleExport, onToggleWatermark, language }: { document: ImportedDocument | null; activePage: number; exportPages: number[]; watermarkedPages: number[]; onActivate: (page: number) => void; onToggleExport: (page: number) => void; onToggleWatermark: (page: number) => void; language: AppLanguage }) {
   const t = text(language);
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null);
   useEffect(() => {
@@ -35,6 +35,6 @@ export function PageThumbnails({ document, activePage, selectedPages, onActivate
     <button style={{ border: 0, background: "transparent", padding: 0, width: "100%", cursor: "pointer" }} onClick={() => onActivate(page.index)} aria-label={`Open page ${page.index + 1}`}>
       {document.kind === "pdf" && pdf ? <LazyPdfThumbnail pdf={pdf} page={page.index} /> : document.kind === "png" ? <PngCanvas bytes={document.bytes} width={page.width} height={page.height} scale={0.17} /> : <div style={{ height: 115 }} />}
     </button>
-    <div className="page-label"><Checkbox checked={selectedPages.includes(page.index)} onChange={() => onToggle(page.index)} label={`${t.include} P${page.index + 1}`} /></div>
+    <div className="page-options"><Checkbox checked={exportPages.includes(page.index)} onChange={() => onToggleExport(page.index)} label={`${t.exportPage} P${page.index + 1}`} /><Checkbox checked={watermarkedPages.includes(page.index)} onChange={() => onToggleWatermark(page.index)} label={`${t.watermarkPage} P${page.index + 1}`} /></div>
   </div>)}</aside>;
 }

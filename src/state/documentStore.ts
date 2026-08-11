@@ -31,17 +31,19 @@ export function createDefaultWatermark(settings: AppSettings): WatermarkInstance
 interface DocumentStore {
   document: ImportedDocument | null;
   activePage: number;
-  selectedPages: number[];
+  exportPages: number[];
+  watermarkedPages: number[];
   watermarks: Record<number, WatermarkInstance>;
   history: WatermarkHistory;
   setDocument: (document: ImportedDocument, settings: AppSettings) => void;
   clearDocument: () => void;
   setActivePage: (page: number) => void;
-  toggleSelectedPage: (page: number) => void;
+  toggleExportPage: (page: number) => void;
+  toggleWatermarkedPage: (page: number) => void;
   updateWatermark: (patch: WatermarkPatch) => void;
   updateTransform: (patch: Partial<WatermarkInstance["transform"]>) => void;
   resetTransform: (settings: AppSettings) => void;
-  applyActiveWatermarkToSelected: () => void;
+  applyActiveWatermarkToWatermarked: () => void;
   undo: () => void;
   redo: () => void;
 }
@@ -56,21 +58,24 @@ export const useDocumentStore = create<DocumentStore>((set, get) => {
   return {
     document: null,
     activePage: 0,
-    selectedPages: [0],
+    exportPages: [0],
+    watermarkedPages: [0],
     watermarks: {},
     history: { past: [], future: [] },
     setDocument(document, settings) {
       const defaultWatermark = createDefaultWatermark(settings);
       const watermarks = Object.fromEntries(document.pages.map((page) => [page.index, clone(defaultWatermark)]));
-      set({ document, activePage: 0, selectedPages: [0], watermarks, history: { past: [], future: [] } });
+      set({ document, activePage: 0, exportPages: [0], watermarkedPages: [0], watermarks, history: { past: [], future: [] } });
     },
     clearDocument() {
-      set({ document: null, activePage: 0, selectedPages: [0], watermarks: {}, history: { past: [], future: [] } });
+      set({ document: null, activePage: 0, exportPages: [0], watermarkedPages: [0], watermarks: {}, history: { past: [], future: [] } });
     },
-    // Opening a page only edits that page; inclusion in export is controlled by its checkbox.
     setActivePage(page) { set({ activePage: page }); },
-    toggleSelectedPage(page) {
-      set((state) => ({ selectedPages: state.selectedPages.includes(page) ? state.selectedPages.filter((item) => item !== page) : [...state.selectedPages, page] }));
+    toggleExportPage(page) {
+      set((state) => ({ exportPages: state.exportPages.includes(page) ? state.exportPages.filter((item) => item !== page) : [...state.exportPages, page] }));
+    },
+    toggleWatermarkedPage(page) {
+      set((state) => ({ watermarkedPages: state.watermarkedPages.includes(page) ? state.watermarkedPages.filter((item) => item !== page) : [...state.watermarkedPages, page] }));
     },
     updateWatermark(patch) {
       const state = get();
@@ -91,12 +96,12 @@ export const useDocumentStore = create<DocumentStore>((set, get) => {
     resetTransform(settings) {
       get().updateWatermark({ transform: { x: 0.5, y: 0.55, width: 0.65, rotation: settings.defaultRotation } });
     },
-    applyActiveWatermarkToSelected() {
+    applyActiveWatermarkToWatermarked() {
       const state = get();
       const source = state.watermarks[state.activePage];
       if (!source) return;
       const next = copyMap(state.watermarks);
-      for (const page of state.selectedPages) next[page] = clone(source);
+      for (const page of state.watermarkedPages) next[page] = clone(source);
       commit(next);
     },
     undo() {

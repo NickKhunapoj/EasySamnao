@@ -31,7 +31,7 @@ button, input, select, textarea { font: inherit; }
 .page-thumb { width: 100%; border: 1px solid #ddd; background: white; border-radius: 4px; margin-bottom: 9px; padding: 5px; cursor: pointer; text-align: left; }
 .page-thumb.selected { outline: 2px solid #0f6cbd; border-color: #0f6cbd; }
 .page-thumb canvas { width: 100%; display: block; background: white; }
-.page-label { padding: 4px 1px 0; font-size: 12px; }
+.page-options { display: grid; gap: 2px; padding: 4px 1px 0; font-size: 12px; }
 .preview-region { position: relative; min-width: 0; min-height: 0; background: #e9e9ea; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .preview-canvas-wrap { position: relative; margin: 12px; max-width: calc(100% - 24px); max-height: calc(100% - 24px); box-shadow: 0 3px 12px #0004; background: white; line-height: 0; }
 .preview-canvas-wrap canvas { display: block; }

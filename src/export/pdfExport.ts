@@ -20,19 +20,27 @@ async function loadThaiFont(pdf: PDFDocument, settings: AppSettings) {
   catch { throw new Error("The selected font could not be embedded. Choose a valid Thai-capable TTF or OTF font."); }
 }
 
-export async function exportEasySamnaoPdf(document: ImportedDocument, watermarks: Record<number, WatermarkInstance>, signatureFor: (id: string | null) => Promise<string | null>, settings: AppSettings): Promise<Uint8Array> {
+export async function exportEasySamnaoPdf(document: ImportedDocument, pageIndexes: number[], watermarks: Record<number, WatermarkInstance>, signatureFor: (id: string | null) => Promise<string | null>, settings: AppSettings): Promise<Uint8Array> {
+  const exportedPageIndexes = [...new Set(pageIndexes)].sort((first, second) => first - second);
+  if (!exportedPageIndexes.length) throw new Error("Select at least one page to export.");
   const pdf = document.kind === "pdf"
     ? await PDFDocument.load(document.bytes, { ignoreEncryption: false, updateMetadata: false })
     : await PDFDocument.create();
+  if (document.kind === "pdf") {
+    for (let index = pdf.getPageCount() - 1; index >= 0; index -= 1) {
+      if (!exportedPageIndexes.includes(index)) pdf.removePage(index);
+    }
+  }
   if (document.kind === "png") {
     const source = await pdf.embedPng(document.bytes);
     const page = pdf.addPage([document.pages[0].width, document.pages[0].height]);
     page.drawImage(source, { x: 0, y: 0, width: page.getWidth(), height: page.getHeight() });
   }
-  const font = await loadThaiFont(pdf, settings);
-  for (let index = 0; index < pdf.getPageCount(); index += 1) {
-    const watermark = watermarks[index];
-    if (watermark) await drawWatermarkToPdfPage(pdf.getPage(index), font, watermark, await signatureFor(watermark.signatureId));
+  const hasWatermark = exportedPageIndexes.some((index) => watermarks[index]);
+  const font = hasWatermark ? await loadThaiFont(pdf, settings) : null;
+  for (let outputIndex = 0; outputIndex < exportedPageIndexes.length; outputIndex += 1) {
+    const watermark = watermarks[exportedPageIndexes[outputIndex]];
+    if (watermark && font) await drawWatermarkToPdfPage(pdf.getPage(outputIndex), font, watermark, await signatureFor(watermark.signatureId));
   }
   return pdf.save({ useObjectStreams: true });
 }

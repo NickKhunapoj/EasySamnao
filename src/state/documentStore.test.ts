@@ -19,15 +19,22 @@ describe("page-specific watermark state and history", () => {
     expect(useDocumentStore.getState().watermarks[0].transform.rotation).toBe(-30);
     store.redo(); expect(useDocumentStore.getState().watermarks[0].transform.rotation).toBe(-12);
   });
-  it("copies the active watermark only when explicitly applied to included pages", () => {
+  it("copies the active watermark only when explicitly applied to watermarked pages", () => {
     const store = useDocumentStore.getState();
-    store.updateTransform({ x: 0.24 }); store.toggleSelectedPage(1); store.applyActiveWatermarkToSelected();
+    store.updateTransform({ x: 0.24 }); store.toggleWatermarkedPage(1); store.applyActiveWatermarkToWatermarked();
     expect(useDocumentStore.getState().watermarks[1].transform.x).toBe(0.24);
+  });
+  it("keeps export and watermark inclusion independent", () => {
+    const store = useDocumentStore.getState();
+    store.toggleExportPage(1);
+    expect(useDocumentStore.getState()).toMatchObject({ exportPages: [0, 1], watermarkedPages: [0] });
+    store.toggleWatermarkedPage(1);
+    expect(useDocumentStore.getState()).toMatchObject({ exportPages: [0, 1], watermarkedPages: [0, 1] });
   });
   it("clears the document and all in-progress editor state", () => {
     const store = useDocumentStore.getState();
-    store.updateTransform({ x: 0.24 }); store.setActivePage(1); store.toggleSelectedPage(1);
+    store.updateTransform({ x: 0.24 }); store.setActivePage(1); store.toggleExportPage(1); store.toggleWatermarkedPage(1);
     store.clearDocument();
-    expect(useDocumentStore.getState()).toMatchObject({ document: null, activePage: 0, selectedPages: [0], watermarks: {}, history: { past: [], future: [] } });
+    expect(useDocumentStore.getState()).toMatchObject({ document: null, activePage: 0, exportPages: [0], watermarkedPages: [0], watermarks: {}, history: { past: [], future: [] } });
   });
 });

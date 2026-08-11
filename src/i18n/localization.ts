@@ -6,11 +6,11 @@ export const translations = {
     localUtility: "Local-only document utility", importDocument: "Import document", import: "Import", discard: "Discard", discardConfirm: "Discard the current document and all unsaved watermark changes?",
     exportCompleted: "Export completed.", openFile: "Open file", openFolder: "Open folder",
     previewZoom: "Preview zoom", fitPage: "Fit page", fitWidth: "Fit width", currentPage: "Current page", selectedPages: "Selected pages", allPages: "All pages",
-    exportPdf: "Export PDF", exportPng: "Export PNG", pngPages: "PNG pages", pngResolution: "PNG export resolution",
+    exportPdf: "Export PDF", exportPng: "Export PNG", exportPages: "Pages to export", exportPage: "Export", watermarkPage: "Watermark", pngResolution: "PNG export resolution",
     include: "Include", template: "Template", certificationTemplate: "Certification template", purpose: "Purpose", certificationText: "Certification text",
     purposeHint: "Type the complete phrase, e.g. ใช้สมัครงาน … เท่านั้น", purposeExact: "Text is used exactly as entered.",
     signature: "Signature", electronicSignature: "Electronic signature", noSignature: "No signature", signerName: "Signer name", showSignerName: "Show signer name", showDate: "Show date", date: "Date", dateFormat: "Date format",
-    appearance: "Appearance", textColor: "Text color", lineColor: "Line color", opacity: "Opacity", layout: "Layout", rotation: "Rotation", width: "Width", scale: "Scale", resetLayout: "Reset layout", applyToIncluded: "Apply to included",
+    appearance: "Appearance", textColor: "Text color", lineColor: "Line color", opacity: "Opacity", layout: "Layout", rotation: "Rotation", width: "Width", scale: "Scale", resetLayout: "Reset layout", applyToWatermarked: "Apply to watermarked pages",
     importDocumentToView: "Import a document to view pages.", importDocumentToEdit: "Import a document to edit its certification watermark.",
     importPdfOrPng: "Import a PDF or PNG", dropDocument: "Drag a document here, or select it from your computer. Files stay on this device.", chooseDocument: "Choose document",
     defaults: "Defaults", language: "Language", theme: "Theme", light: "Light", dark: "Dark", system: "System", defaultTemplate: "Default template", defaultOpacity: "Default opacity", defaultRotation: "Default rotation", defaultDateFormat: "Default date format",
@@ -39,4 +39,4 @@ export const translations = {
   }
 } as const;
 
-export function text(language: AppLanguage) { return translations[language]; }
+export function text(language: AppLanguage) { return { ...translations.en, ...translations[language] }; }

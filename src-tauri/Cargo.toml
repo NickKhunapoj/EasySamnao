@@ -1,6 +1,6 @@
 [package]
 name = "easysamnao"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local Windows utility for preparing document copies."
 authors = ["NickKhunapoj"]
 edition = "2021"
