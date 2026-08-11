@@ -8,7 +8,7 @@ EasySamnao is a local-only Windows desktop utility for applying editable Thai do
 
 ## Screenshots
 
-<img width="2560" height="1392" alt="Screenshot 2026-08-10 223047" src="https://github.com/user-attachments/assets/44328e6c-b1b9-442f-8b79-b06319f09002" />
+<img width="2560" height="1392" alt="Screenshot 2026-08-11 110224" src="https://github.com/user-attachments/assets/9925bff4-0e29-45f6-9b04-b20473804474" />
 
 ## Features
 
