@@ -51,7 +51,10 @@ export interface WatermarkInstance {
   transform: WatermarkTransform;
 }
 
-export type WatermarkPatch = Omit<Partial<WatermarkInstance>, "style" | "transform"> & {
+export type WatermarkPatch = Omit<
+  Partial<WatermarkInstance>,
+  "style" | "transform"
+> & {
   style?: Partial<WatermarkStyle>;
   transform?: Partial<WatermarkTransform>;
 };
@@ -61,6 +64,80 @@ export interface SignatureMetadata {
   name: string;
   createdAt: string;
   isDefault: boolean;
+}
+
+export type CertificateStatus =
+  | "active"
+  | "expiring"
+  | "expired"
+  | "retired"
+  | "compromised"
+  | "revoked"
+  | "missing-private-key";
+export type CertificateTrust =
+  "self-signed" | "trusted" | "untrusted" | "unknown";
+
+export interface BoundSignature {
+  svgId: string;
+  svgSha256: string;
+  boundAt: string;
+}
+
+/** Non-secret profile information. Private keys always remain in Windows key storage. */
+export interface CertificateProfile {
+  id: string;
+  displayName: string;
+  source: "generated" | "pkcs12" | "windows-store";
+  certificateFingerprint: string;
+  subject: string;
+  issuer: string;
+  serialNumber: string;
+  validFrom: string;
+  validUntil: string;
+  trust: CertificateTrust;
+  status: CertificateStatus;
+  privateKeyReference?: string | null;
+  boundSignature?: BoundSignature | null;
+  predecessorCertificateId?: string | null;
+  successorCertificateId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CertificateBindingState {
+  state: "valid" | "unbound" | "changed" | "missing";
+  svgId?: string | null;
+  expectedSha256?: string | null;
+  actualSha256?: string | null;
+}
+
+export interface PdfSignatureVerification {
+  integrityValid: boolean;
+  documentChangedAfterSigning: boolean;
+  signer?: string | null;
+  certificateFingerprint?: string | null;
+  trust: CertificateTrust;
+  certificateStatus: CertificateStatus;
+  message: string;
+}
+
+export interface CreateCertificateRequest {
+  id: string;
+  displayName: string;
+  subjectName: string;
+  email?: string;
+  organization?: string;
+  validityYears: number;
+  bindSvgId?: string;
+  predecessorCertificateId?: string;
+}
+
+export interface DigitalSigningOptions {
+  certificateId: string;
+  signerName: string;
+  reason: string;
+  location: string;
+  pageIndex: number;
 }
 
 export interface AppSettings {

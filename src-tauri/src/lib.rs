@@ -1,4 +1,5 @@
 mod commands;
+mod certificates;
 mod signatures;
 mod storage;
 
@@ -23,7 +24,21 @@ pub fn run() {
             read_signature,
             rename_signature,
             delete_signature,
-            set_default_signature
+            set_default_signature,
+            list_certificates,
+            create_certificate,
+            inspect_pkcs12,
+            import_pkcs12,
+            discover_windows_certificates,
+            bind_certificate_signature,
+            certificate_binding_state,
+            set_certificate_status,
+            export_certificate_file,
+            export_certificate_pkcs12,
+            remove_certificate_profile,
+            delete_certificate_from_windows,
+            sign_prepared_pdf,
+            verify_pdf_signatures
         ])
         .run(tauri::generate_context!())
         .expect("error while running EasySamnao");

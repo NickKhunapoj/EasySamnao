@@ -20,7 +20,7 @@ EasySamnao is a local-only Windows desktop utility for applying editable Thai do
 - Supports distinct watermark layouts per page and copying a layout to selected/all pages.
 - Supports Thai Buddhist Era dates: `10/08/2569` and `10 สิงหาคม 2569`, plus English and ISO formats.
 - Imports, sanitizes, previews, renames, and locally stores SVG signatures.
-- Exports PDFs without rasterizing the original PDF content; text/lines are drawn as PDF vectors and only SVG signatures may be rasterized.
+- Flattens each watermarked PDF page at 600 DPI, binding the watermark into the rendered page artwork rather than leaving it as removable PDF drawing commands.
 - Exports one PNG per page at 150, 300, or 600 DPI-equivalent resolution.
 - Embeds a user-selected Thai TTF/OTF into PDF output with `pdf-lib` and `fontkit`.
 
@@ -30,18 +30,18 @@ The desktop shell is Tauri 2 + Rust; the UI is React, TypeScript, Vite, Fluent U
 
 Core folders:
 
-| Folder | Responsibility |
-| --- | --- |
-| `src/pages` | Create Copy and Settings screens |
-| `src/state` | Zustand settings, document, watermark history/state |
-| `src/templates` | Template definitions and platform-neutral element plans |
-| `src/editor` | Konva transformable group editor |
-| `src/documents` | Native import and PDF.js render logic |
-| `src/export` | Vector PDF and high-DPI PNG output |
-| `src/signatures` | Browser-side SVG sanitation/storage bridge |
-| `src-tauri/src` | Local commands, font inspection, DPAPI storage |
+| Folder           | Responsibility                                          |
+| ---------------- | ------------------------------------------------------- |
+| `src/pages`      | Create Copy and Settings screens                        |
+| `src/state`      | Zustand settings, document, watermark history/state     |
+| `src/templates`  | Template definitions and platform-neutral element plans |
+| `src/editor`     | Konva transformable group editor                        |
+| `src/documents`  | Native import and PDF.js render logic                   |
+| `src/export`     | Flattened watermarked PDF and high-DPI PNG output       |
+| `src/signatures` | Browser-side SVG sanitation/storage bridge              |
+| `src-tauri/src`  | Local commands, font inspection, DPAPI storage          |
 
-The template plan is a list of editable lines, text items, and a signature box. It is rendered by Konva for preview, Canvas for PNG export, and pdf-lib for PDF export; it is never stored as a flattened watermark image.
+The template plan is a list of editable lines, text items, and a signature box. It is rendered by Konva for preview and Canvas for PNG export. A watermarked PDF page is first rendered at 600 DPI and then embedded as one flattened page image.
 
 ## Preview and coordinate model
 
@@ -53,13 +53,15 @@ The document preview pipeline is:
 
 ## PDF and PNG export
 
-For a source PDF, `pdf-lib` loads the original bytes and appends drawing commands to each page—there is no page screenshot or document rasterization. A selected Thai font is embedded with `fontkit`; text and horizontal rules remain vectors. Sanitized SVGs are source data; the implementation rasterizes only a signature to a transparent, high-resolution PNG for PDF compatibility.
+For a source PDF, pages without a watermark are copied unchanged. Each watermarked page is staged with its selected Thai font, rendered at 600 DPI, and embedded as one image in the output PDF. Watermarked exports require digital signing and open without a password. The final signature adds tamper evidence, so changing the flattened image invalidates the signature. Flattening raises the cost of watermark removal but does not stop screenshots or a determined attacker from creating a new file.
 
 PNG export renders the original PDF page with PDF.js at the requested DPI and composites the same template plan. Multiple pages are saved as `filename-easysamnao-page-001.png`, etc.; a multi-page PNG is never invented.
 
 ## Signatures, fonts, and privacy
 
 SVG imports pass through a graphics-only sanitizer. It retains safe shape tags/attributes and removes scripts, event handlers, `foreignObject`, images, external resources, JavaScript/file URLs, `<use>`, and all unknown elements. Sanitized payloads are encrypted using Windows DPAPI before being written below the standard per-user Tauri application-data directory. Metadata and settings remain ordinary local JSON. Signature bytes are decrypted only into process memory when previewing/exporting.
+
+EasySamnao also supports optional **digital PDF signatures** on Windows. A visual SVG is not a digital signature: the app can bind an SVG to a certificate by SHA-256, then use the certificate’s Windows-stored private key to create a standard detached CMS/PKCS#7 PDF signature after every visual edit has finished. Self-signed certificates prove PDF integrity but not independently verified identity. See [digital signatures](docs/digital-signatures.md), [certificate management](docs/certificate-management.md), and the [security model](docs/security-model.md).
 
 The app checks a selected TTF/OTF for the Thai glyphs needed by the template. It searches `C:\Windows\Fonts` for TH Sarabun New on first launch; if unavailable, select another Thai-capable local font in Settings. Font files are never downloaded at runtime.
 
@@ -97,7 +99,7 @@ npm run test
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
-The Vitest suite covers coordinate/rotation conversion, Thai dates, template composition/defaults, wrapping, colour parsing, page-specific layout copying, undo/redo, SVG sanitizer rules, and programmatic vector PDF output. Rust tests cover safe storage identifiers, expected file extensions, and DPAPI encryption/decryption on Windows.
+The Vitest suite covers coordinate/rotation conversion, Thai dates, template composition/defaults, wrapping, colour parsing, page-specific layout copying, undo/redo, SVG sanitizer rules, and flattened PDF watermark output. Rust tests cover safe storage identifiers, expected file extensions, and DPAPI encryption/decryption on Windows.
 
 ## Production installer
 

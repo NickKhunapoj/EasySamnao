@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::{fs, path::{Path, PathBuf}};
 use tauri::AppHandle;
 use ttf_parser::Face;
-use crate::{signatures::{self, SignatureMetadata}, storage::{app_directory, read_json, write_json}};
+use crate::{certificates::{self, CertificateProfile, CertificateStatus, CreateCertificateRequest, BindingState, PdfSignatureVerification}, signatures::{self, SignatureMetadata}, storage::{app_directory, read_json, write_json}};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -110,6 +110,35 @@ pub fn rename_signature(app: AppHandle, id: String, name: String) -> Result<(), 
 pub fn delete_signature(app: AppHandle, id: String) -> Result<(), String> { signatures::delete(&app, &id) }
 #[tauri::command]
 pub fn set_default_signature(app: AppHandle, id: String) -> Result<(), String> { signatures::set_default(&app, &id) }
+
+#[tauri::command]
+pub fn list_certificates(app: AppHandle) -> Result<Vec<CertificateProfile>, String> { certificates::list(&app) }
+#[tauri::command]
+pub fn create_certificate(app: AppHandle, request: CreateCertificateRequest) -> Result<CertificateProfile, String> { certificates::create(&app, request) }
+#[tauri::command]
+pub fn inspect_pkcs12(path: String, password: String) -> Result<CertificateProfile, String> { certificates::inspect_pkcs12(path, password) }
+#[tauri::command]
+pub fn import_pkcs12(app: AppHandle, id: String, display_name: String, path: String, password: String) -> Result<CertificateProfile, String> { certificates::import_pkcs12(&app, id, display_name, path, password) }
+#[tauri::command]
+pub fn discover_windows_certificates(app: AppHandle) -> Result<Vec<CertificateProfile>, String> { certificates::discover_windows(&app) }
+#[tauri::command]
+pub fn bind_certificate_signature(app: AppHandle, certificate_id: String, svg_id: String) -> Result<(), String> { certificates::bind_signature(&app, &certificate_id, &svg_id) }
+#[tauri::command]
+pub fn certificate_binding_state(app: AppHandle, certificate_id: String) -> Result<BindingState, String> { certificates::binding_state(&app, &certificate_id) }
+#[tauri::command]
+pub fn set_certificate_status(app: AppHandle, certificate_id: String, status: CertificateStatus) -> Result<(), String> { certificates::set_status(&app, &certificate_id, status) }
+#[tauri::command]
+pub fn export_certificate_file(app: AppHandle, certificate_id: String, path: String) -> Result<(), String> { certificates::export_certificate(&app, &certificate_id, &path) }
+#[tauri::command]
+pub fn export_certificate_pkcs12(app: AppHandle, certificate_id: String, path: String, password: String) -> Result<(), String> { certificates::export_pkcs12(&app, &certificate_id, &path, password) }
+#[tauri::command]
+pub fn remove_certificate_profile(app: AppHandle, certificate_id: String) -> Result<(), String> { certificates::remove_profile(&app, &certificate_id) }
+#[tauri::command]
+pub fn delete_certificate_from_windows(app: AppHandle, certificate_id: String, confirmation: String) -> Result<(), String> { certificates::delete_from_windows(&app, &certificate_id, &confirmation) }
+#[tauri::command]
+pub fn sign_prepared_pdf(app: AppHandle, certificate_id: String, bytes: Vec<u8>) -> Result<Vec<u8>, String> { certificates::sign_pdf(&app, &certificate_id, bytes) }
+#[tauri::command]
+pub fn verify_pdf_signatures(bytes: Vec<u8>) -> Result<Vec<PdfSignatureVerification>, String> { certificates::verify_pdf(bytes) }
 
 #[cfg(test)]
 mod tests {

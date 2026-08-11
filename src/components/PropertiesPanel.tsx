@@ -15,6 +15,10 @@ interface Props {
   onApplyToWatermarked: () => void;
 }
 
+function truncateOptionLabel(value: string, maxLength = 26) {
+  return value.length > maxLength ? `${value.slice(0, maxLength).trimEnd()}...` : value;
+}
+
 export function PropertiesPanel({ watermark, signatures, onChange, onTransform, onReset, onApplyToWatermarked }: Props) {
   const t = text(useSettingsStore((state) => state.settings.language));
   const [rotationInput, setRotationInput] = useState("");
@@ -38,7 +42,7 @@ export function PropertiesPanel({ watermark, signatures, onChange, onTransform, 
     <section className="property-section">
       <h3>{t.signature}</h3>
       <div className="field"><label htmlFor="signature">{t.electronicSignature}</label><Select id="signature" value={watermark.signatureId ?? ""} onChange={(event) => onChange({ signatureId: event.target.value || null })}>
-        <option value="">{t.noSignature}</option>{signatures.map((signature) => <option key={signature.id} value={signature.id}>{signature.name}{signature.isDefault ? ` (${t.default})` : ""}</option>)}
+        <option value="">{t.noSignature}</option>{signatures.map((signature) => { const label = `${signature.name}${signature.isDefault ? ` (${t.default})` : ""}`; return <option key={signature.id} value={signature.id} title={label}>{truncateOptionLabel(label)}</option>; })}
       </Select></div>
       <div className="field"><label htmlFor="signer-name">{t.signerName}</label><Input id="signer-name" value={watermark.signerName} onChange={(_, data) => onChange({ signerName: data.value })} /></div>
       <Switch label={t.showSignerName} checked={watermark.showSignerName} onChange={(_, data) => onChange({ showSignerName: data.checked })} />

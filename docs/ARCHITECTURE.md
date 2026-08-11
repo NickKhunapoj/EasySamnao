@@ -23,7 +23,7 @@ flowchart TD
   A["WatermarkInstance"] --> B["Template planner"]
   B --> C["Text / line / signature element plan"]
   C --> D["Konva preview"]
-  C --> E["PDF vector renderer"]
+  C --> E["PDF staging renderer"]
   C --> F["Canvas PNG renderer"]
   A --> G["Normalized transform: x/y/width/rotation"]
   G --> D
@@ -43,7 +43,7 @@ flowchart LR
   D --> E["EasySamnao PDF"]
 ```
 
-PDF export preserves the original PDF content stream and adds watermark operations. The original document is not rendered to an image. PNG output deliberately renders the page at the chosen resolution, then overlays the plan.
+PDF export preserves pages without watermarks. A watermarked page is staged with its watermark, rendered at 600 DPI, and embedded as one image in the final PDF. This removes independent watermark drawing objects. Watermarked PDF exports are digitally signed after visual edits complete and open without a password. PNG output deliberately renders the page at the chosen resolution, then overlays the plan.
 
 ## Local security boundary
 
