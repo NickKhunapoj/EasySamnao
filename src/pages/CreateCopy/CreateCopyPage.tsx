@@ -1,7 +1,7 @@
 import { Button, Select } from "@fluentui/react-components";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
-import { openPath, revealItemInDir } from "@tauri-apps/plugin-opener";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { useEffect, useRef, useState } from "react";
 import { DocumentPreview, type ZoomMode } from "../../components/DocumentPreview";
 import { PageThumbnails } from "../../components/PageThumbnails";
@@ -99,11 +99,6 @@ export function CreateCopyPage() {
     return svg;
   };
   const write = async (path: string, bytes: Uint8Array) => invoke("write_export_file", { path, bytes: Array.from(bytes) });
-  const openExportedFile = async () => {
-    if (!successPath) return;
-    try { setError(null); await openPath(successPath); }
-    catch (reason) { setError(reason instanceof Error ? reason.message : "Unable to open the exported file."); }
-  };
   const revealExportedFile = async () => {
     if (!successPath) return;
     try { setError(null); await revealItemInDir(successPath); }
@@ -151,7 +146,7 @@ export function CreateCopyPage() {
   };
   return <main className="workspace page">
     <div className="workspace-top"><div className="workspace-header"><div><h1>{t.createCopy}</h1><div className="document-meta">{document ? `${document.filename} · ${document.pages.length} ${t.pages.toLowerCase()} · ${Math.round(document.pages[activePage]?.width ?? 0)} × ${Math.round(document.pages[activePage]?.height ?? 0)}` : t.localUtility}</div></div><div className="workspace-actions"><Button onClick={importDocument}>{t.importDocument}</Button><Button appearance="secondary" className="discard-button" disabled={!document || busy} onClick={discardWork}>{t.discard}</Button></div></div>
-      {error && <div className="error-banner">{error}</div>}{successPath && <div className="notice">{t.exportCompleted} <Button size="small" onClick={openExportedFile}>{t.openFile}</Button><Button size="small" onClick={revealExportedFile}>{t.openFolder}</Button></div>}
+      {error && <div className="error-banner">{error}</div>}{successPath && <div className="notice">{t.exportCompleted} <Button size="small" onClick={revealExportedFile}>{t.openFolder}</Button></div>}
     </div>
     <div className="workspace-grid">
       <PageThumbnails document={document} activePage={activePage} exportPages={exportPages} watermarkedPages={watermarkedPages} onActivate={setActivePage} onToggleExport={toggleExportPage} onToggleWatermark={toggleWatermarkedPage} language={settings.language} />

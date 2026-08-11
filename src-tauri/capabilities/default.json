@@ -3,5 +3,5 @@
   "identifier": "main-capability",
   "description": "Permissions required by the single local application window.",
   "windows": ["main"],
-  "permissions": ["core:default", "dialog:default", "opener:default", "opener:allow-open-path"]
+  "permissions": ["core:default", "dialog:default", "opener:default"]
 }
