@@ -22,9 +22,9 @@ The renderer can request a signing operation but does not receive the private ke
 
 ## Flattened watermarks
 
-Watermarked PDF pages are rendered at 600 DPI and embedded as a single image layer. This prevents a PDF editor from simply selecting and deleting a separate watermark text, line, or SVG object. Exports are not password-encrypted, so recipients can open them directly.
+Unsigned watermarked PDF pages are rendered at 300 DPI and embedded as a single image layer. This prevents a PDF editor from simply selecting and deleting a separate watermark text, line, or SVG object. Digitally signed exports keep the watermark as vector artwork: removing it remains possible, but invalidates the signature. Exports are not password-encrypted, so recipients can open them directly.
 
-Flattening is a deterrent, not absolute copy protection: a determined party can still take screenshots, render pages, edit pixels, or create a new document. The final digital signature covers the flattened content, so any alteration to the signed byte range is reported as a signature failure. Standard PDF copy/edit permissions require password-based encryption and can cause password prompts in common browser viewers, so they are not used for this openable distribution format.
+Flattening is a deterrent, not absolute copy protection: a determined party can still take screenshots, render pages, edit pixels, or create a new document. The final digital signature covers all signed content, so any alteration to the signed byte range is reported as a signature failure. Standard PDF copy/edit permissions require password-based encryption and can cause password prompts in common browser viewers, so they are not used for this openable distribution format.
 
 ## Secrets
 

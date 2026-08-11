@@ -24,7 +24,8 @@ EasySamnao เป็นยูทิลิตีเดสก์ท็อป Windo
 - รองรับ layout ลายน้ำแยกตามแต่ละหน้า และการคัดลอก layout ไปยังหน้าที่เลือกหรือทุกหน้า
 - รองรับวันที่พุทธศักราชไทย: `10/08/2569` และ `10 สิงหาคม 2569` รวมถึงรูปแบบภาษาอังกฤษและ ISO
 - นำเข้า ทำความสะอาด แสดงตัวอย่าง เปลี่ยนชื่อ และจัดเก็บ SVG signature ภายในเครื่อง
-- export PDF โดยไม่ rasterize เนื้อหา PDF ต้นฉบับ: ข้อความและเส้นจะวาดเป็น PDF vector และมีเพียง SVG signature ที่อาจถูก rasterize
+- PDF ที่มีลายน้ำแต่ไม่ได้ลงลายเซ็นดิจิทัลจะถูก flatten ที่ 300 DPI; PDF ที่ลงลายเซ็นดิจิทัลจะคงลายน้ำแบบ vector เพื่อคุณภาพสูงและตรวจพบการแก้ไขได้
+- สร้าง นำเข้า จัดการ และผูกใบรับรองดิจิทัลกับ SVG ภายใน Windows Certificate Store เพื่อใช้ลงลายเซ็น PDF แบบ CMS/PKCS#7
 - export PNG หนึ่งไฟล์ต่อหน้าที่ค่าเทียบเท่า 150, 300 หรือ 600 DPI
 - ฝังฟอนต์ไทย TTF/OTF ที่ผู้ใช้เลือกลงใน PDF output ด้วย `pdf-lib` และ `fontkit`
 
@@ -41,11 +42,11 @@ desktop shell ใช้ Tauri 2 + Rust ส่วน UI ใช้ React, TypeScri
 | `src/templates` | นิยามเทมเพลตและ element plan ที่ไม่ขึ้นกับแพลตฟอร์ม |
 | `src/editor` | Konva group editor ที่แปลงขนาดและหมุนได้ |
 | `src/documents` | ตรรกะการนำเข้าด้วย native และการ render ด้วย PDF.js |
-| `src/export` | การ export PDF แบบ vector และ PNG ความละเอียดสูง |
+| `src/export` | การ export PDF แบบ vector เมื่อลงลายเซ็น, แบบ flattened เมื่อลงลายเซ็นไม่ใช้ และ PNG ความละเอียดสูง |
 | `src/signatures` | SVG sanitation และ storage bridge ฝั่ง browser |
 | `src-tauri/src` | คำสั่งภายในเครื่อง การตรวจฟอนต์ และ DPAPI storage |
 
-template plan คือรายการบรรทัด ข้อความ และ signature box ที่แก้ไขได้ โดย render ด้วย Konva สำหรับ preview, Canvas สำหรับ PNG export และ pdf-lib สำหรับ PDF export และจะไม่ถูกจัดเก็บเป็นภาพลายน้ำแบบ flattened
+template plan คือรายการบรรทัด ข้อความ และ signature box ที่แก้ไขได้ โดย render ด้วย Konva สำหรับ preview, Canvas สำหรับ PNG export และ pdf-lib สำหรับ PDF export PDF ที่ไม่ได้ลงลายเซ็นดิจิทัลจะจัดเก็บลายน้ำเป็นภาพ flattened 300 DPI ส่วน PDF ที่ลงลายเซ็นจะคงลายน้ำแบบ vector เพื่อความคมชัดและขนาดไฟล์ที่เล็กกว่า
 
 ## โมเดล preview และพิกัด
 
@@ -57,13 +58,15 @@ pipeline ของ document preview คือ:
 
 ## การ export PDF และ PNG
 
-สำหรับ PDF ต้นฉบับ `pdf-lib` จะโหลด bytes เดิมและเพิ่ม drawing commands ลงในแต่ละหน้า โดยไม่มีการจับภาพหน้าจอหรือ rasterize เอกสาร ฟอนต์ไทยที่เลือกจะถูกฝังด้วย `fontkit`; ข้อความและเส้นแนวนอนยังคงเป็น vector ส่วน SVG ที่ผ่านการ sanitize เป็น source data โดย implementation จะ rasterize เฉพาะ signature เป็น PNG โปร่งใสความละเอียดสูงเพื่อความเข้ากันได้กับ PDF
+สำหรับ PDF ต้นฉบับ หน้าที่ไม่มีลายน้ำจะถูกคัดลอกโดยไม่เปลี่ยนแปลง หน้าที่มีลายน้ำแต่ไม่ได้ลงลายเซ็นดิจิทัลจะถูก render ที่ 300 DPI และฝังเป็นภาพเดียวใน PDF เพื่อเพิ่มความยากในการลบลายน้ำ ส่วน PDF ที่ลงลายเซ็นดิจิทัลจะคงข้อความ เส้น และ SVG เป็น vector เพื่อคุณภาพเต็มและขนาดไฟล์ที่เล็กกว่า หากลบหรือแก้ไขลายน้ำ ลายเซ็นดิจิทัลจะไม่ถูกต้อง PDF ที่ export เปิดดูได้โดยไม่ต้องใช้รหัสผ่าน
 
 PNG export จะ render หน้า PDF ต้นฉบับด้วย PDF.js ที่ DPI ที่เลือก แล้ว compositing template plan เดียวกัน หน้าหลายหน้าจะถูกบันทึกเป็น `filename-easysamnao-page-001.png` เป็นต้น โดยจะไม่สร้าง PNG หลายหน้า
 
 ## ลายเซ็น ฟอนต์ และความเป็นส่วนตัว
 
 SVG ที่นำเข้าจะผ่าน sanitizer สำหรับกราฟิกเท่านั้น ซึ่งคงไว้เฉพาะ tag/attribute ของ shape ที่ปลอดภัย และลบ scripts, event handlers, `foreignObject`, images, external resources, JavaScript/file URLs, `<use>` และ element ที่ไม่รู้จักทั้งหมด payload ที่ผ่านการ sanitize จะถูกเข้ารหัสด้วย Windows DPAPI ก่อนเขียนลงใต้ standard per-user Tauri application-data directory ส่วน metadata และ settings ยังคงเป็น local JSON ปกติ bytes ของ signature จะถูกถอดรหัสไว้ใน process memory เฉพาะตอน preview/export เท่านั้น
+
+EasySamnao รองรับลายเซ็นดิจิทัล PDF แบบเลือกใช้บน Windows โดย SVG ที่มองเห็นไม่ใช่ลายเซ็นดิจิทัล แอปสามารถผูก SVG กับใบรับรองด้วย SHA-256 และใช้ private key ที่เก็บใน Windows เพื่อสร้างลายเซ็น PDF แบบ detached CMS/PKCS#7 หลังจากแก้ไขภาพทั้งหมดเสร็จแล้ว ใบรับรองแบบ self-signed ยืนยันได้ว่าไฟล์ไม่ถูกแก้ไข แต่ไม่ยืนยันตัวตนของผู้ลงลายเซ็นจากหน่วยงานอิสระ ดูรายละเอียดที่ [digital signatures](docs/digital-signatures.md), [certificate management](docs/certificate-management.md) และ [security model](docs/security-model.md)
 
 แอปจะตรวจสอบ TTF/OTF ที่เลือกว่ามี Thai glyphs ที่จำเป็นสำหรับเทมเพลตหรือไม่ โดยจะค้นหา TH Sarabun New ใน `C:\Windows\Fonts` เมื่อเปิดใช้งานครั้งแรก หากไม่พบ ให้เลือกฟอนต์ในเครื่องอื่นที่รองรับภาษาไทยใน Settings ฟอนต์จะไม่ถูกดาวน์โหลดในขณะ runtime
 

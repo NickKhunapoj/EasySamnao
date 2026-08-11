@@ -169,7 +169,21 @@ async function addFlattenedWatermarkedPage(
   });
 }
 
-/** Finalizes visual edits, flattening every watermarked page before signing. */
+async function addVectorWatermarkedPage(
+  output: PDFDocument,
+  source: PDFDocument,
+  pageIndex: number,
+  watermark: WatermarkInstance,
+  signatureSvg: string | null,
+  settings: AppSettings,
+): Promise<void> {
+  const [page] = await output.copyPages(source, [pageIndex]);
+  output.addPage(page);
+  const fonts = await loadThaiFont(output, settings);
+  await drawWatermarkToPdfPage(page, fonts, watermark, signatureSvg);
+}
+
+/** Unsigned watermarks are flattened; signed exports keep sharp vector artwork. */
 export async function exportEasySamnaoPdf(
   document: ImportedDocument,
   pageIndexes: number[],
@@ -208,16 +222,28 @@ export async function exportEasySamnaoPdf(
   for (const pageIndex of exportedPageIndexes) {
     const watermark = watermarks[pageIndex];
     if (watermark) {
-      await addFlattenedWatermarkedPage(
-        pdf,
-        source,
-        document,
-        pageIndex,
-        watermark,
-        await signatureFor(watermark.signatureId),
-        settings,
-        rasterize,
-      );
+      const signatureSvg = await signatureFor(watermark.signatureId);
+      if (digitalSigning) {
+        await addVectorWatermarkedPage(
+          pdf,
+          source,
+          pageIndex,
+          watermark,
+          signatureSvg,
+          settings,
+        );
+      } else {
+        await addFlattenedWatermarkedPage(
+          pdf,
+          source,
+          document,
+          pageIndex,
+          watermark,
+          signatureSvg,
+          settings,
+          rasterize,
+        );
+      }
     } else {
       const [sourcePage] = await pdf.copyPages(source, [pageIndex]);
       pdf.addPage(sourcePage);
@@ -249,9 +275,9 @@ export async function exportEasySamnaoPdf(
       appName: "EasySamnao",
     });
   }
-  // The prepared signature dictionary must remain a normal indirect object with a
-  // fixed-width byte-range placeholder; object streams are therefore disabled only
-  // for the signing path.
-  const prepared = await pdf.save({ useObjectStreams: !digitalSigning });
+  // The signature dictionary itself is registered as a PDFInvalidObject by the
+  // placeholder library, keeping its fixed-width byte range outside object streams.
+  // Other objects can still use compression, which keeps signed PDFs compact.
+  const prepared = await pdf.save({ useObjectStreams: true });
   return digitalSigning ? applyBangkokSigningTime(prepared) : prepared;
 }

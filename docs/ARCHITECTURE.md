@@ -43,7 +43,7 @@ flowchart LR
   D --> E["EasySamnao PDF"]
 ```
 
-PDF export preserves pages without watermarks. A watermarked page is staged with its watermark, rendered at 600 DPI, and embedded as one image in the final PDF. This removes independent watermark drawing objects. Watermarked PDF exports are digitally signed after visual edits complete and open without a password. PNG output deliberately renders the page at the chosen resolution, then overlays the plan.
+PDF export preserves pages without watermarks. Unsigned watermarked pages are staged with their watermark, rendered at 300 DPI, and embedded as one image in the final PDF. Digitally signed exports keep their watermark vector-based and sign it after all visual edits complete, which provides tamper evidence without rasterizing the page. Exports open without a password. PNG output deliberately renders the page at the chosen resolution, then overlays the plan.
 
 ## Local security boundary
 

@@ -20,7 +20,7 @@ EasySamnao is a local-only Windows desktop utility for applying editable Thai do
 - Supports distinct watermark layouts per page and copying a layout to selected/all pages.
 - Supports Thai Buddhist Era dates: `10/08/2569` and `10 สิงหาคม 2569`, plus English and ISO formats.
 - Imports, sanitizes, previews, renames, and locally stores SVG signatures.
-- Flattens each watermarked PDF page at 600 DPI, binding the watermark into the rendered page artwork rather than leaving it as removable PDF drawing commands.
+- Uses 300-DPI flattening for unsigned watermarked PDFs; digitally signed PDFs preserve sharp vector watermark artwork and show tampering if it is removed or changed.
 - Exports one PNG per page at 150, 300, or 600 DPI-equivalent resolution.
 - Embeds a user-selected Thai TTF/OTF into PDF output with `pdf-lib` and `fontkit`.
 
@@ -37,11 +37,11 @@ Core folders:
 | `src/templates`  | Template definitions and platform-neutral element plans |
 | `src/editor`     | Konva transformable group editor                        |
 | `src/documents`  | Native import and PDF.js render logic                   |
-| `src/export`     | Flattened watermarked PDF and high-DPI PNG output       |
+| `src/export`     | Signed vector/unsigned flattened PDF and high-DPI PNG output |
 | `src/signatures` | Browser-side SVG sanitation/storage bridge              |
 | `src-tauri/src`  | Local commands, font inspection, DPAPI storage          |
 
-The template plan is a list of editable lines, text items, and a signature box. It is rendered by Konva for preview and Canvas for PNG export. A watermarked PDF page is first rendered at 600 DPI and then embedded as one flattened page image.
+The template plan is a list of editable lines, text items, and a signature box. It is rendered by Konva for preview and Canvas for PNG export. Unsigned watermarked PDF pages are rendered at 300 DPI and embedded as one flattened page image; digitally signed PDFs preserve sharp vector watermark artwork.
 
 ## Preview and coordinate model
 
@@ -53,7 +53,7 @@ The document preview pipeline is:
 
 ## PDF and PNG export
 
-For a source PDF, pages without a watermark are copied unchanged. Each watermarked page is staged with its selected Thai font, rendered at 600 DPI, and embedded as one image in the output PDF. Watermarked exports require digital signing and open without a password. The final signature adds tamper evidence, so changing the flattened image invalidates the signature. Flattening raises the cost of watermark removal but does not stop screenshots or a determined attacker from creating a new file.
+For a source PDF, pages without a watermark are copied unchanged. Unsigned watermarked pages are staged with their selected Thai font, rendered at 300 DPI, and embedded as one image in the output PDF. Digitally signed exports keep the watermark as vector artwork for full quality and much smaller files; removing or changing it invalidates the signature. Exports open without a password. Flattening raises the cost of watermark removal but does not stop screenshots or a determined attacker from creating a new file.
 
 PNG export renders the original PDF page with PDF.js at the requested DPI and composites the same template plan. Multiple pages are saved as `filename-easysamnao-page-001.png`, etc.; a multi-page PNG is never invented.
 
@@ -99,7 +99,7 @@ npm run test
 cargo test --manifest-path src-tauri/Cargo.toml
 ```
 
-The Vitest suite covers coordinate/rotation conversion, Thai dates, template composition/defaults, wrapping, colour parsing, page-specific layout copying, undo/redo, SVG sanitizer rules, and flattened PDF watermark output. Rust tests cover safe storage identifiers, expected file extensions, and DPAPI encryption/decryption on Windows.
+The Vitest suite covers coordinate/rotation conversion, Thai dates, template composition/defaults, wrapping, colour parsing, page-specific layout copying, undo/redo, SVG sanitizer rules, signed-vector and flattened PDF watermark output. Rust tests cover certificate storage, safe storage identifiers, expected file extensions, and DPAPI encryption/decryption on Windows.
 
 ## Production installer
 

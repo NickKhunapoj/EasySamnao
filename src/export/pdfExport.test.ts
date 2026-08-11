@@ -145,4 +145,44 @@ describe("vector PDF watermark output", () => {
     const text = new TextDecoder().decode(output);
     expect(text).toMatch(/\/M \(D:\d{14}\+07'00'\)/);
   });
+
+  it("keeps watermarks as vectors when the PDF will be digitally signed", async () => {
+    const source = await PDFDocument.create();
+    source.addPage([595, 842]);
+    const fontBytes = await readFile(
+      resolve(process.cwd(), "src/assets/THSarabunNew.ttf"),
+    );
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async () => new Response(fontBytes);
+
+    try {
+      const output = await exportEasySamnaoPdf(
+        {
+          path: "",
+          filename: "test.pdf",
+          kind: "pdf",
+          bytes: await source.save(),
+          pages: [{ index: 0, width: 595, height: 842, rotation: 0 }],
+        },
+        [0],
+        { 0: createDefaultWatermark(defaultSettings) },
+        async () => null,
+        defaultSettings,
+        {
+          certificateId: "certificate",
+          signerName: "Test signer",
+          reason: "Test",
+          location: "Bangkok",
+          pageIndex: 0,
+        },
+        async () => {
+          throw new Error("A signed PDF must not rasterize the watermark.");
+        },
+      );
+      expect(output.byteLength).toBeLessThan(500_000);
+      expect((await PDFDocument.load(output)).getPageCount()).toBe(1);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
 });
