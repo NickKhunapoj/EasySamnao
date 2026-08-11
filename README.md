@@ -2,6 +2,8 @@
 
 # EasySamnao
 
+English | [ไทย](README.th.md)
+
 EasySamnao is a local-only Windows desktop utility for applying editable Thai document-certification overlays to PDF and PNG documents. It is designed for sensitive identity documents: there is no backend, cloud sync, analytics, telemetry, CDN, or runtime network dependency.
 
 ## Screenshots
